@@ -32,33 +32,60 @@ const Settings = () => {
     const apiUrl = "https://script.google.com/macros/s/AKfycbyzZ_KxsII2w95PsqH3JprWCCiQRehkRTrnNQmQWVWYX8vosFClyTtTSawjAUPzDs9a/exec";
     const sheetName = "USER";
 
-    // Fetch users from Google Sheet
+    // Fetch users from Google Sheet - UPDATED to match your AuthContext pattern
     const fetchData = async () => {
         setLoading(true);
         setError('');
         try {
+            console.log("Fetching users from:", `${apiUrl}?sheet=${sheetName}`);
+            
             const response = await fetch(`${apiUrl}?sheet=${sheetName}`);
             const result = await response.json();
 
-            if (result.success && result.data) {
-                const rows = result.data;
-                const dataRows = rows.slice(1); // Remove header row
+            console.log("API Response:", result);
 
-                // Map users from sheet data - ADJUSTED TO MATCH YOUR SHEET STRUCTURE
-                const mappedUsers = dataRows.map((row, index) => ({
-                    rowIndex: index + 2, // 1-indexed, +1 for header
-                    name: row[0] || '',      // User Name (A)
-                    id: row[1] || '',        // ID (B)
-                    password: row[2] || '',  // Password (C)
-                    role: row[3] || 'User',  // Role (D)
-                    systemId: row[4] || '',  // System ID (E)
-                    status: row[5] || 'Active', // Status (F)
-                    timestamp: row[6] || ''  // Timestamp (G)
-                })).filter(u => u.id && u.id.trim() !== ''); // Filter out empty rows
+            if (result.success) {
+                const rows = result.data || result.rows;
+                
+                if (!rows || rows.length === 0) {
+                    console.log("No data rows found");
+                    setUsers([]);
+                    setLoading(false);
+                    return;
+                }
+                
+                // Get headers from first row if using data structure
+                let dataRows = rows;
+                if (result.data && result.data.length > 0) {
+                    // If using result.data, skip header row
+                    dataRows = rows.slice(1);
+                }
+                
+                console.log("Data rows to process:", dataRows);
+                
+                // Map users from sheet data - Using the same pattern as your AuthContext
+                const mappedUsers = dataRows.map((row, index) => {
+                    // Handle both array and object formats
+                    if (Array.isArray(row)) {
+                        return {
+                            rowIndex: index + 2, // 1-indexed, +1 for header
+                            name: row[0] || '',      // Column A: User Name
+                            id: row[1] || '',        // Column B: ID
+                            password: row[2] || '',  // Column C: Password
+                            role: row[3] || 'User',  // Column D: Role
+                            systemId: row[4] || '',  // Column E: System ID
+                            status: row[5] || 'Active', // Column F: Status
+                            timestamp: row[6] || ''  // Column G: Timestamp
+                        };
+                    }
+                    return null;
+                }).filter(u => u && u.id && u.id.toString().trim() !== '');
 
+                console.log("Mapped users:", mappedUsers);
                 setUsers(mappedUsers);
             } else {
-                setError('Failed to load users data');
+                console.error("API returned unsuccessful:", result);
+                setError(result.error || 'Failed to load users data');
             }
         } catch (err) {
             console.error('Error fetching users:', err);
@@ -126,7 +153,7 @@ const Settings = () => {
         }
     };
 
-    // ✅ FIXED: Add new user using batchInsert to avoid auto-serial number generation
+    // Add new user
     const handleAddUser = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -155,8 +182,7 @@ const Settings = () => {
             const year = String(now.getFullYear()).slice(-2);
             const timestamp = `${day}/${month}/${year}`;
 
-            // ✅ CORRECT ORDER: Matches USER sheet columns exactly
-            // Columns: User Name | ID | Password | Role | System ID | Status | Timestamp
+            // Correct order for USER sheet columns
             const rowData = [
                 addForm.name.trim(),           // Column A: User Name
                 addForm.id.trim(),             // Column B: ID
@@ -169,17 +195,15 @@ const Settings = () => {
 
             console.log("Submitting user data:", rowData);
 
-            // ✅ Use batchInsert with single row to bypass auto-serial number generation
-            // This works because your Apps Script's batchInsert doesn't modify the data
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: new URLSearchParams({
-                    action: "batchInsert",     // ✅ Changed to batchInsert
+                    action: "batchInsert",
                     sheetName: sheetName,
-                    rowsData: JSON.stringify([rowData])  // ✅ Wrap in array for batch insert
+                    rowsData: JSON.stringify([rowData])
                 })
             });
 
@@ -288,11 +312,31 @@ const Settings = () => {
         setTimeout(() => setSuccessMessage(''), 3000);
     };
 
+    // Test API connection
+    const testApiConnection = async () => {
+        console.log("Testing API connection...");
+        try {
+            const response = await fetch(`${apiUrl}?sheet=${sheetName}`);
+            const data = await response.json();
+            console.log("API Test Result:", data);
+            alert(`API Test: ${data.success ? 'SUCCESS' : 'FAILED'}\nRows: ${data.data?.length || 0}`);
+        } catch (error) {
+            console.error("API Test Error:", error);
+            alert("API Test Failed: " + error.message);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-full">
                 <Loader2 size={48} className="animate-spin text-blue-600 mb-4" />
-                <p className="text-gray-500 font-medium">Loading users...</p>
+                <p className="text-gray-500 font-medium">Loading users from {sheetName} sheet...</p>
+                <button 
+                    onClick={testApiConnection}
+                    className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
+                >
+                    Test API Connection
+                </button>
             </div>
         );
     }
@@ -320,7 +364,7 @@ const Settings = () => {
                             className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-gray-600 font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50"
                         >
                             <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
-                            Refresh
+                            {loading ? 'Refreshing...' : 'Refresh'}
                         </button>
                         {user?.role === 'admin' && (
                             <button
@@ -338,6 +382,47 @@ const Settings = () => {
                             <Lock size={16} />
                             Logout
                         </button>
+                    </div>
+                </div>
+
+                {/* Debug Panel - You can remove this in production */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="font-medium text-blue-800">Debug Information</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                                <div>
+                                    <p className="text-xs text-blue-600">Current User</p>
+                                    <p className="text-sm font-medium">{user?.name} ({user?.role})</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-blue-600">Users Count</p>
+                                    <p className="text-sm font-medium">{users.length}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-blue-600">Sheet</p>
+                                    <p className="text-sm font-medium">{sheetName}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-blue-600">API Status</p>
+                                    <p className="text-sm font-medium text-green-600">Connected</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <button 
+                                onClick={testApiConnection}
+                                className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm"
+                            >
+                                Test API
+                            </button>
+                            <button 
+                                onClick={() => console.log("Users data:", users)}
+                                className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm"
+                            >
+                                Log Data
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -419,6 +504,12 @@ const Settings = () => {
                                                 <User size={48} className="text-gray-300 mb-4" />
                                                 <p className="text-gray-500 font-medium">No users found</p>
                                                 <p className="text-gray-400 text-sm mt-1">Add your first user to get started</p>
+                                                <button 
+                                                    onClick={testApiConnection}
+                                                    className="mt-4 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm hover:bg-blue-100"
+                                                >
+                                                    Test Data Fetch
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
