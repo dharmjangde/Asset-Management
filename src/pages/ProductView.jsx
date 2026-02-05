@@ -1,4 +1,4 @@
-// ProductView.jsx - ENHANCED MOBILE-FRIENDLY VERSION (UPDATED)
+// ProductView.jsx - MODERN UI ENHANCED VERSION
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from '../context/ProductContext';
@@ -74,35 +74,29 @@ const ProductView = () => {
     }));
   };
 
-  // UPDATED DATE FORMAT FUNCTION - Always returns dd/mm/yy
   const formatDate = (dateStr) => {
     if (!dateStr || dateStr === '-' || dateStr === '' || dateStr === 'undefined' || dateStr === 'null') {
       return '-';
     }
     
     try {
-      // Handle various date formats
       let date;
       
-      // Handle your specific format: "02T18:30:00.000Z/02/2026"
       if (dateStr.includes('T') && dateStr.includes('Z/')) {
         const parts = dateStr.split('Z/');
         if (parts[1]) {
           const [month, year] = parts[1].split('/');
           if (month && year) {
-            const day = '01'; // Default day if not provided
+            const day = '01';
             const shortYear = year.length === 4 ? year.slice(-2) : year;
             return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${shortYear}`;
           }
         }
       }
       
-      // Try to parse as Date object
       date = new Date(dateStr);
       
-      // If date is invalid, try to parse manually
       if (isNaN(date.getTime())) {
-        // Try dd/mm/yyyy format
         if (dateStr.includes('/')) {
           const parts = dateStr.split('/');
           if (parts.length === 3) {
@@ -111,17 +105,14 @@ const ProductView = () => {
             date = new Date(`${fullYear}-${month}-${day}`);
           }
         }
-        // Try yyyy-mm-dd format
         else if (dateStr.includes('-')) {
           const parts = dateStr.split('-');
           if (parts.length === 3) {
-            const [year, month, day] = parts;
             date = new Date(dateStr);
           }
         }
       }
       
-      // Final formatting to dd/mm/yy
       if (!isNaN(date.getTime())) {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -129,7 +120,6 @@ const ProductView = () => {
         return `${day}/${month}/${year}`;
       }
       
-      // Return original if all parsing fails
       return dateStr;
     } catch {
       return dateStr;
@@ -144,10 +134,10 @@ const ProductView = () => {
 
   if (contextLoading || pageLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading product details...</p>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent shadow-lg"></div>
+          <p className="mt-6 text-gray-700 font-semibold text-lg">Loading product details...</p>
         </div>
       </div>
     );
@@ -155,16 +145,16 @@ const ProductView = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-md p-6 max-w-md w-full text-center">
-          <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
-            <AlertCircle className="h-6 w-6 text-red-600" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-100">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center mb-6 shadow-lg">
+            <AlertCircle className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-          <p className="text-gray-600 mb-4">Product ID: {productId}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Product Not Found</h1>
+          <p className="text-gray-600 mb-6 text-lg">Product ID: <span className="font-semibold">{productId}</span></p>
           <button 
             onClick={() => navigate(-1)}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             ← Go Back
           </button>
@@ -177,51 +167,51 @@ const ProductView = () => {
   const isActive = product.status === 'Active';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header - REMOVED EDIT BUTTON */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-3">
-          <div className="py-3">
-            <div className="flex items-center justify-between mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Modern Header with Glassmorphism */}
+      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/20">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="py-4">
+            <div className="flex items-center justify-between mb-3">
               <button
                 onClick={() => navigate(-1)}
-                className="flex items-center text-gray-600 hover:text-gray-900 text-sm"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors hover:gap-3 duration-200"
               >
-                ← Back
+                <span className="text-lg">←</span> Back
               </button>
-              <div className="flex items-center gap-2">
-                <button className="p-1.5 hover:bg-gray-100 rounded-lg">
-                  <Printer className="w-4 h-4" />
+              <div className="flex items-center gap-3">
+                <button className="p-2.5 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:shadow-md">
+                  <Printer className="w-5 h-5 text-gray-600" />
                 </button>
-                <button className="p-1.5 hover:bg-gray-100 rounded-lg">
-                  <Share2 className="w-4 h-4" />
+                <button className="p-2.5 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:shadow-md">
+                  <Share2 className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </div>
             
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent mb-2">
                 {product.productName || 'Product Details'}
               </h1>
-              <div className="flex items-center flex-wrap gap-1.5 mt-1">
-                <span className="inline-flex items-center bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">
-                  <Tag className="w-2.5 h-2.5 mr-1" />
+              <div className="flex items-center flex-wrap gap-2.5">
+                <span className="inline-flex items-center bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm">
+                  <Tag className="w-3.5 h-3.5 mr-1.5" />
                   {productSn}
                 </span>
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm ${
                   isActive 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                    : 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
                 }`}>
                   {isActive ? (
-                    <CheckCircle className="w-2.5 h-2.5 mr-1" />
+                    <CheckCircle className="w-3.5 h-3.5 mr-1.5" />
                   ) : (
-                    <XCircle className="w-2.5 h-2.5 mr-1" />
+                    <XCircle className="w-3.5 h-3.5 mr-1.5" />
                   )}
                   {product.status}
                 </span>
                 {product.brand && (
-                  <span className="text-xs text-gray-600">• {product.brand}</span>
+                  <span className="text-sm text-gray-600 font-medium">• {product.brand}</span>
                 )}
               </div>
             </div>
@@ -230,46 +220,46 @@ const ProductView = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-3 py-4">
-        {/* Quick Stats Bar - Compact */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Modern Quick Stats Bar with Gradients */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           <StatCard 
             icon={DollarSign}
             value={formatCurrency(product.assetValue || product.cost)}
             label="Asset Value"
-            color="bg-blue-500"
+            gradient="from-blue-500 to-blue-600"
           />
           <StatCard 
             icon={Package}
             value={product.qty || product.quantity || 1}
             label="Quantity"
-            color="bg-green-500"
+            gradient="from-green-500 to-emerald-600"
           />
           <StatCard 
             icon={Shield}
             value={product.warranty === 'Yes' ? 'Active' : 'None'}
             label="Warranty"
-            color={product.warranty === 'Yes' ? "bg-teal-500" : "bg-gray-500"}
+            gradient={product.warranty === 'Yes' ? "from-teal-500 to-cyan-600" : "from-gray-500 to-gray-600"}
           />
           <StatCard 
             icon={Wrench}
             value={product.maintenance === 'Yes' ? 'Required' : 'Not Req'}
             label="Maintenance"
-            color={product.maintenance === 'Yes' ? "bg-orange-500" : "bg-gray-500"}
+            gradient={product.maintenance === 'Yes' ? "from-orange-500 to-amber-600" : "from-gray-500 to-gray-600"}
           />
         </div>
 
         {/* Main Content Grid */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Basic Information Section */}
           <CollapsibleSection
             title="Basic Information"
             icon={Package}
             isExpanded={expandedSections.basic}
             onToggle={() => toggleSection('basic')}
-            color="bg-blue-500"
+            gradient="from-blue-500 to-indigo-600"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <InfoField label="Product Name" value={product.productName} />
               <InfoField label="Category" value={product.category} />
               <InfoField label="Type" value={product.type} />
@@ -289,9 +279,9 @@ const ProductView = () => {
             icon={CreditCard}
             isExpanded={expandedSections.financial}
             onToggle={() => toggleSection('financial')}
-            color="bg-green-500"
+            gradient="from-green-500 to-emerald-600"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <InfoField label="Asset Value" value={formatCurrency(product.assetValue)} />
               <InfoField label="Purchase Cost" value={formatCurrency(product.cost)} />
               <InfoField label="Quantity" value={product.qty || product.quantity} />
@@ -310,21 +300,21 @@ const ProductView = () => {
             icon={Shield}
             isExpanded={expandedSections.warranty}
             onToggle={() => toggleSection('warranty')}
-            color="bg-teal-500"
+            gradient="from-teal-500 to-cyan-600"
           >
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoField label="Warranty Available" value={product.warranty} highlight={product.warranty === 'Yes'} />
                 <InfoField label="AMC Contract" value={product.amc} highlight={product.amc === 'Yes'} />
               </div>
               
               {product.warranty === 'Yes' && (
-                <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
-                    <Shield className="w-3.5 h-3.5" />
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200 shadow-sm">
+                  <h4 className="font-bold text-green-800 mb-3 flex items-center gap-2 text-base">
+                    <Shield className="w-4 h-4" />
                     Warranty Details
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <InfoField label="Warranty Provider" value={product.warrantyProvider} />
                     <InfoField label="Warranty Start" value={formatDate(product.warrantyStart)} />
                     <InfoField label="Warranty End" value={formatDate(product.warrantyEnd)} />
@@ -334,12 +324,12 @@ const ProductView = () => {
               )}
 
               {product.amc === 'Yes' && (
-                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
-                    <FileText className="w-3.5 h-3.5" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200 shadow-sm">
+                  <h4 className="font-bold text-blue-800 mb-3 flex items-center gap-2 text-base">
+                    <FileText className="w-4 h-4" />
                     AMC Details
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <InfoField label="AMC Provider" value={product.amcProvider} />
                     <InfoField label="AMC Start" value={formatDate(product.amcStart)} />
                     <InfoField label="AMC End" value={formatDate(product.amcEnd)} />
@@ -355,9 +345,9 @@ const ProductView = () => {
             icon={MapPin}
             isExpanded={expandedSections.location}
             onToggle={() => toggleSection('location')}
-            color="bg-indigo-500"
+            gradient="from-indigo-500 to-purple-600"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <InfoField label="Location" value={product.location} />
               <InfoField label="Department" value={product.department} />
               <InfoField label="Assigned To" value={product.assignedTo} />
@@ -374,23 +364,23 @@ const ProductView = () => {
               icon={Truck}
               isExpanded={expandedSections.location}
               onToggle={() => toggleSection('location')}
-              color="bg-purple-500"
+              gradient="from-purple-500 to-pink-600"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoField label="Supplier Name" value={product.supplier || product.supplierName} />
                 <InfoField label="Payment Mode" value={product.payment || product.paymentMode} />
                 {product.supplierPhone && (
                   <InfoField 
                     label="Supplier Phone" 
                     value={product.supplierPhone}
-                    icon={<Phone className="w-3 h-3" />}
+                    icon={<Phone className="w-3.5 h-3.5" />}
                   />
                 )}
                 {product.supplierEmail && (
                   <InfoField 
                     label="Supplier Email" 
                     value={product.supplierEmail}
-                    icon={<Mail className="w-3 h-3" />}
+                    icon={<Mail className="w-3.5 h-3.5" />}
                   />
                 )}
               </div>
@@ -403,10 +393,10 @@ const ProductView = () => {
             icon={Settings}
             isExpanded={expandedSections.maintenance}
             onToggle={() => toggleSection('maintenance')}
-            color="bg-orange-500"
+            gradient="from-orange-500 to-red-600"
           >
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InfoField label="Maintenance Required" value={product.maintenance} />
                 <InfoField label="Maintenance Type" value={product.maintenanceType} />
                 <InfoField label="Frequency" value={product.frequency} />
@@ -416,9 +406,9 @@ const ProductView = () => {
               </div>
               
               {product.maintenanceNotes && (
-                <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                  <h4 className="font-semibold text-amber-800 mb-1 text-sm">Maintenance Notes</h4>
-                  <p className="text-gray-700 text-sm">{product.maintenanceNotes}</p>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200 shadow-sm">
+                  <h4 className="font-bold text-amber-800 mb-2 text-sm">Maintenance Notes</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">{product.maintenanceNotes}</p>
                 </div>
               )}
             </div>
@@ -430,30 +420,30 @@ const ProductView = () => {
             icon={History}
             isExpanded={expandedSections.repairs}
             onToggle={() => toggleSection('repairs')}
-            color="bg-rose-500"
+            gradient="from-rose-500 to-pink-600"
           >
-            <div className="space-y-3">
-              {/* Summary Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                <div className="bg-rose-50 rounded-lg p-2 border border-rose-200">
-                  <p className="text-xs text-rose-600 font-medium">Total Repairs</p>
-                  <p className="text-lg font-bold text-rose-700">{repairs.length}</p>
+            <div className="space-y-4">
+              {/* Modern Summary Stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-3 border-2 border-rose-200 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-xs text-rose-600 font-semibold uppercase tracking-wide">Total Repairs</p>
+                  <p className="text-2xl font-bold text-rose-700 mt-1">{repairs.length}</p>
                 </div>
-                <div className="bg-rose-50 rounded-lg p-2 border border-rose-200">
-                  <p className="text-xs text-rose-600 font-medium">Total Cost</p>
-                  <p className="text-lg font-bold text-rose-700">
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-3 border-2 border-rose-200 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-xs text-rose-600 font-semibold uppercase tracking-wide">Total Cost</p>
+                  <p className="text-xl font-bold text-rose-700 mt-1">
                     {formatCurrency(repairs.reduce((sum, r) => sum + (parseFloat(r.repairCost) || 0), 0))}
                   </p>
                 </div>
-                <div className="bg-rose-50 rounded-lg p-2 border border-rose-200">
-                  <p className="text-xs text-rose-600 font-medium">Last Repair</p>
-                  <p className="text-sm font-bold text-rose-700">
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-3 border-2 border-rose-200 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-xs text-rose-600 font-semibold uppercase tracking-wide">Last Repair</p>
+                  <p className="text-sm font-bold text-rose-700 mt-1">
                     {repairs.length > 0 ? formatDate(repairs[0].repairDate) : '-'}
                   </p>
                 </div>
-                <div className="bg-rose-50 rounded-lg p-2 border border-rose-200">
-                  <p className="text-xs text-rose-600 font-medium">Parts Changed</p>
-                  <p className="text-lg font-bold text-rose-700">
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-3 border-2 border-rose-200 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-xs text-rose-600 font-semibold uppercase tracking-wide">Parts Changed</p>
+                  <p className="text-2xl font-bold text-rose-700 mt-1">
                     {repairs.filter(r => r.partChanged === 'Yes').length}
                   </p>
                 </div>
@@ -461,63 +451,63 @@ const ProductView = () => {
 
               {/* Repair List */}
               {repairs.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {repairs.map((repair, index) => (
-                    <div key={index} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-sm transition-shadow">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
-                        <div className="mb-1 sm:mb-0">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span className="bg-rose-100 text-rose-700 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                    <div key={index} className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:shadow-lg transition-all duration-200 hover:border-rose-300">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3">
+                        <div className="mb-2 sm:mb-0">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="bg-gradient-to-r from-rose-500 to-pink-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
                               #{repairs.length - index}
                             </span>
-                            <span className="font-semibold text-gray-900 text-sm">
+                            <span className="font-bold text-gray-900 text-base">
                               {formatDate(repair.repairDate)}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                            <User className="w-3 h-3" />
-                            Technician: {repair.technician || 'N/A'}
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <User className="w-3.5 h-3.5" />
+                            <span className="font-medium">Technician:</span> {repair.technician || 'N/A'}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xs text-gray-500">Repair Cost</p>
-                          <p className="text-base font-bold text-rose-600">
+                        <div className="text-right bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg px-4 py-2 border border-rose-200">
+                          <p className="text-xs text-rose-600 font-semibold uppercase tracking-wide">Repair Cost</p>
+                          <p className="text-xl font-bold text-rose-700 mt-0.5">
                             {formatCurrency(repair.repairCost)}
                           </p>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3 mb-2">
+                      <div className="grid grid-cols-2 gap-4 mb-3">
                         <div>
-                          <p className="text-xs text-gray-500">Parts Changed</p>
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium ${
+                          <p className="text-xs text-gray-500 font-medium mb-1">Parts Changed</p>
+                          <span className={`inline-block px-3 py-1 rounded-lg text-sm font-bold shadow-sm ${
                             repair.partChanged === 'Yes' 
-                              ? 'bg-green-100 text-green-700' 
-                              : 'bg-gray-100 text-gray-600'
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                              : 'bg-gray-200 text-gray-700'
                           }`}>
                             {repair.partChanged || 'No'}
                           </span>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Logged Date</p>
-                          <p className="text-sm text-gray-700 font-medium">
+                          <p className="text-xs text-gray-500 font-medium mb-1">Logged Date</p>
+                          <p className="text-sm text-gray-700 font-bold">
                             {formatDate(repair.createdDate)}
                           </p>
                         </div>
                       </div>
 
                       {repair.partChanged === 'Yes' && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <p className="text-xs font-medium text-gray-700 mb-1">Parts Replaced:</p>
-                          <div className="flex flex-wrap gap-1.5">
+                        <div className="mt-3 pt-3 border-t-2 border-dashed border-gray-200">
+                          <p className="text-sm font-bold text-gray-700 mb-2">Parts Replaced:</p>
+                          <div className="flex flex-wrap gap-2">
                             {[repair.part1, repair.part2, repair.part3, repair.part4, repair.part5]
                               .filter(part => part && part !== '-' && part !== '')
                               .map((part, idx) => (
                                 <span 
                                   key={idx} 
-                                  className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 text-xs font-medium px-2 py-1 rounded border border-rose-200"
+                                  className="inline-flex items-center gap-1.5 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 text-sm font-semibold px-3 py-1.5 rounded-lg border-2 border-rose-300 shadow-sm"
                                 >
-                                  <Layers className="w-2.5 h-2.5" />
+                                  <Layers className="w-3 h-3" />
                                   {part}
                                 </span>
                               ))}
@@ -526,9 +516,9 @@ const ProductView = () => {
                       )}
 
                       {repair.remarks && repair.remarks.trim() !== '-' && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <p className="text-xs font-medium text-gray-700 mb-1">Remarks:</p>
-                          <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                        <div className="mt-3 pt-3 border-t-2 border-dashed border-gray-200">
+                          <p className="text-sm font-bold text-gray-700 mb-2">Remarks:</p>
+                          <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
                             {repair.remarks}
                           </p>
                         </div>
@@ -537,10 +527,12 @@ const ProductView = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 bg-rose-50 rounded-lg border border-rose-200">
-                  <History className="w-10 h-10 text-rose-300 mx-auto mb-2" />
-                  <p className="text-rose-600 font-medium">No repair history</p>
-                  <p className="text-rose-500 text-xs mt-0.5">No repairs recorded for this product</p>
+                <div className="text-center py-12 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border-2 border-rose-200">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-rose-200 to-pink-200 flex items-center justify-center mb-4">
+                    <History className="w-8 h-8 text-rose-600" />
+                  </div>
+                  <p className="text-rose-700 font-bold text-lg">No repair history</p>
+                  <p className="text-rose-600 text-sm mt-1">No repairs recorded for this product</p>
                 </div>
               )}
             </div>
@@ -553,25 +545,25 @@ const ProductView = () => {
               icon={Clipboard}
               isExpanded={expandedSections.notes}
               onToggle={() => toggleSection('notes')}
-              color="bg-amber-500"
+              gradient="from-amber-500 to-orange-600"
             >
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {product.internalNotes && (
-                  <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                    <h4 className="font-semibold text-amber-800 mb-1 text-sm">Internal Notes</h4>
-                    <p className="text-gray-700 text-sm">{product.internalNotes}</p>
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200 shadow-sm">
+                    <h4 className="font-bold text-amber-800 mb-2 text-sm">Internal Notes</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{product.internalNotes}</p>
                   </div>
                 )}
                 {product.usageRemarks && (
-                  <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                    <h4 className="font-semibold text-blue-800 mb-1 text-sm">Usage Remarks</h4>
-                    <p className="text-gray-700 text-sm">{product.usageRemarks}</p>
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200 shadow-sm">
+                    <h4 className="font-bold text-blue-800 mb-2 text-sm">Usage Remarks</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{product.usageRemarks}</p>
                   </div>
                 )}
                 {product.repairRemarks && (
-                  <div className="bg-rose-50 rounded-lg p-3 border border-rose-200">
-                    <h4 className="font-semibold text-rose-800 mb-1 text-sm">Repair Remarks</h4>
-                    <p className="text-gray-700 text-sm">{product.repairRemarks}</p>
+                  <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-4 border-2 border-rose-200 shadow-sm">
+                    <h4 className="font-bold text-rose-800 mb-2 text-sm">Repair Remarks</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{product.repairRemarks}</p>
                   </div>
                 )}
               </div>
@@ -585,23 +577,26 @@ const ProductView = () => {
               icon={ImageIcon}
               isExpanded={expandedSections.notes}
               onToggle={() => toggleSection('notes')}
-              color="bg-pink-500"
+              gradient="from-pink-500 to-rose-600"
             >
               <div className="flex flex-col items-center">
-                <img 
-                  src={product.image_url} 
-                  alt={product.productName}
-                  className="w-full max-w-md h-auto rounded-lg border-2 border-white shadow"
-                />
+                <div className="relative group">
+                  <img 
+                    src={product.image_url} 
+                    alt={product.productName}
+                    className="w-full max-w-md h-auto rounded-2xl border-4 border-white shadow-2xl group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
                 <a 
                   href={product.image_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 mt-3 bg-blue-600 text-white font-medium py-1.5 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-4 h-4" />
                   Download Image
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </CollapsibleSection>
@@ -612,37 +607,35 @@ const ProductView = () => {
   );
 };
 
-// Helper Components
-const StatCard = ({ icon: Icon, value, label, color }) => (
-  <div className="bg-white rounded-lg border border-gray-200 p-2 text-center hover:shadow-sm transition-shadow">
-    <div className={`inline-flex items-center justify-center w-8 h-8 rounded ${color} text-white mb-1.5 mx-auto`}>
-      <Icon className="w-4 h-4" />
+// Helper Components with Modern Styling
+const StatCard = ({ icon: Icon, value, label, gradient }) => (
+  <div className="bg-white rounded-2xl border-2 border-gray-200 p-4 text-center hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
+    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} text-white mb-3 shadow-lg`}>
+      <Icon className="w-6 h-6" />
     </div>
-    <p className="text-base font-bold text-gray-900 truncate">{value}</p>
-    <p className="text-xs text-gray-600 truncate">{label}</p>
+    <p className="text-lg font-bold text-gray-900 truncate">{value}</p>
+    <p className="text-xs text-gray-600 truncate font-medium uppercase tracking-wide mt-1">{label}</p>
   </div>
 );
 
-const CollapsibleSection = ({ title, icon: Icon, children, isExpanded, onToggle, color }) => (
-  <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-sm transition-shadow">
+const CollapsibleSection = ({ title, icon: Icon, children, isExpanded, onToggle, gradient }) => (
+  <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-md hover:shadow-xl transition-all duration-200">
     <button
       onClick={onToggle}
-      className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 rounded-t-lg transition-colors"
+      className="w-full px-5 py-4 flex items-center justify-between hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent rounded-t-2xl transition-all duration-200 group"
     >
-      <div className="flex items-center gap-2.5">
-        <div className={`w-7 h-7 rounded ${color} flex items-center justify-center`}>
-          <Icon className="w-3.5 h-3.5 text-white" />
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200`}>
+          <Icon className="w-5 h-5 text-white" />
         </div>
-        <h3 className="font-semibold text-gray-900 text-left text-sm">{title}</h3>
+        <h3 className="font-bold text-gray-900 text-left text-base">{title}</h3>
       </div>
-      {isExpanded ? (
-        <ChevronUp className="w-4 h-4 text-gray-500" />
-      ) : (
-        <ChevronDown className="w-4 h-4 text-gray-500" />
-      )}
+      <div className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+        <ChevronDown className="w-5 h-5 text-gray-500" />
+      </div>
     </button>
     {isExpanded && (
-      <div className="px-3 py-2 border-t border-gray-200">
+      <div className="px-5 py-4 border-t-2 border-gray-100">
         {children}
       </div>
     )}
@@ -650,10 +643,10 @@ const CollapsibleSection = ({ title, icon: Icon, children, isExpanded, onToggle,
 );
 
 const InfoField = ({ label, value, highlight, icon }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-1.5 rounded hover:bg-gray-50">
-    <div className="flex items-center gap-1.5 mb-0.5 sm:mb-0">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200 border border-transparent hover:border-gray-200">
+    <div className="flex items-center gap-2 mb-1 sm:mb-0">
       {icon && <span className="text-gray-400">{icon}</span>}
-      <span className="text-xs text-gray-600">{label}</span>
+      <span className="text-sm text-gray-600 font-medium">{label}</span>
     </div>
     <span className={`text-sm font-bold text-right truncate max-w-[60%] ${
       highlight ? 'text-green-600' : 'text-gray-900'
