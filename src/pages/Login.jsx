@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -8,27 +8,47 @@ const Login = () => {
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, user, isLoading } = useAuth();
     const navigate = useNavigate();
 
-   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+    // 🔹 Redirect if already logged in
+    useEffect(() => {
+        if (user && !isLoading) {
+            navigate('/dashboard');
+        }
+    }, [user, isLoading, navigate]);
 
-  const success = await login(id, password);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
 
-  if (success) {
-    navigate("/dashboard");
-  } else {
-    setError("Invalid ID or Password");
-  }
-};
+        const success = await login(id, password);
 
+        if (success) {
+            navigate("/dashboard");
+        } else {
+            setError("Invalid ID or Password");
+        }
+    };
+
+
+
+    // 🔹 Show loading while checking auth
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-sky-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto"></div>
+                    <p className="mt-4 text-sky-600 font-medium">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-sky-50 relative">
             <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md border border-sky-100 z-10">
-                
+
                 {/* LOGO */}
                 <div className="flex justify-center mb-6">
                     <img
